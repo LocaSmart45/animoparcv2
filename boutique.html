@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique | Anim'O'Parc</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Kalam:wght@700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        hand: ['Kalam', 'cursive'],
+                    },
+                    colors: {
+                        brand: {
+                            green: '#2d6a4f',
+                            light: '#d8f3dc',
+                            accent: '#e07a5f',
+                            dark: '#1b4332',
+                            xmas: '#c1121f'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-700 antialiased flex flex-col min-h-screen">
+
+    <nav class="sticky top-0 w-full z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold text-brand-green flex items-center gap-2">
+                <i class="fa-solid fa-paw text-brand-accent"></i> 
+                <span>Anim'O'<span class="text-brand-accent">Parc</span></span>
+            </a>
+            <div class="hidden md:flex items-center space-x-8 font-medium text-sm uppercase tracking-wide">
+                <a href="index.html" class="hover:text-brand-green transition">Retour Accueil</a>
+                <span class="text-brand-accent font-bold border-b-2 border-brand-accent">Boutique</span>
+            </div>
+             <button onclick="toggleCart()" class="relative text-2xl text-brand-dark hover:text-brand-accent transition">
+                <i class="fa-solid fa-basket-shopping"></i>
+                <span id="cart-badge" class="absolute -top-2 -right-2 bg-brand-accent text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="bg-brand-green text-white py-16 relative overflow-hidden">
+        <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
+            <i class="fa-solid fa-bone text-9xl"></i>
+        </div>
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <h1 class="font-hand text-4xl md:text-5xl mb-4 text-brand-light">Friandises Naturelles</h1>
+            <p class="text-lg max-w-2xl mx-auto text-green-100">100% Naturel, sans additifs. Le meilleur de la mastication pour occuper et régaler votre chien.</p>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-12 flex flex-col lg:flex-row gap-10">
+        
+        <aside class="lg:w-1/4">
+            <div class="bg-white p-6 rounded-2xl shadow-lg sticky top-24">
+                <h3 class="font-bold text-xl mb-6 text-brand-dark flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-brand-accent"></i> Catégories
+                </h3>
+                <div class="space-y-3" id="filters">
+                    <button onclick="filterProducts('all')" class="filter-btn w-full text-left px-4 py-3 rounded-xl bg-brand-green text-white font-bold transition shadow-md">
+                        Tout voir
+                    </button>
+                    <button onclick="filterProducts('boeuf')" class="filter-btn w-full text-left px-4 py-3 rounded-xl hover:bg-brand-light hover:text-brand-dark transition text-gray-600 font-medium">
+                        🥩 Bœuf
+                    </button>
+                    <button onclick="filterProducts('volaille')" class="filter-btn w-full text-left px-4 py-3 rounded-xl hover:bg-brand-light hover:text-brand-dark transition text-gray-600 font-medium">
+                        🐔 Volaille
+                    </button>
+                    <button onclick="filterProducts('porc')" class="filter-btn w-full text-left px-4 py-3 rounded-xl hover:bg-brand-light hover:text-brand-dark transition text-gray-600 font-medium">
+                        🐷 Porc
+                    </button>
+                    <button onclick="filterProducts('poisson')" class="filter-btn w-full text-left px-4 py-3 rounded-xl hover:bg-brand-light hover:text-brand-dark transition text-gray-600 font-medium">
+                        🐟 Poissons
+                    </button>
+                    <button onclick="filterProducts('mastication')" class="filter-btn w-full text-left px-4 py-3 rounded-xl hover:bg-brand-light hover:text-brand-dark transition text-gray-600 font-medium">
+                        🦌 Mastication Longue
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="lg:w-3/4">
+            <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                </div>
+        </main>
+    </div>
+
+    <div id="cart-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="toggleCart()"></div>
+        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full" id="cart-panel">
+            <div class="p-6 border-b flex justify-between items-center bg-brand-light/30">
+                <h2 class="text-2xl font-bold text-brand-dark">Votre Panier</h2>
+                <button onclick="toggleCart()" class="text-gray-500 hover:text-red-500 text-2xl">&times;</button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6 space-y-4" id="cart-items">
+                <p class="text-center text-gray-400 mt-10">Votre panier est vide 🐶</p>
+            </div>
+
+            <div class="p-6 border-t bg-gray-50">
+                <div class="flex justify-between items-center mb-4 text-xl font-bold">
+                    <span>Total</span>
+                    <span id="cart-total" class="text-brand-accent">0.00 €</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-brand-green text-white py-4 rounded-xl font-bold hover:bg-brand-dark transition shadow-lg flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Envoyer ma commande
+                </button>
+                <p class="text-xs text-center text-gray-400 mt-3">Cela ouvrira votre application mail avec le récapitulatif.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DONNÉES BASÉES SUR TON CSV
+        const products = [
+            // BOEUF
+            { id: 1, name: "Nerf de Bœuf (15cm)", category: "boeuf", price: 4.90, unit: "unité", img: "https://images.unsplash.com/photo-1598585996614-2561937dfa81?auto=format&fit=crop&w=500&q=80" },
+            { id: 2, name: "Sabot de Bœuf", category: "boeuf", price: 2.40, unit: "unité", img: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=500&q=80" },
+            { id: 3, name: "Bâtonnets de Bœuf", category: "boeuf", price: 5.00, unit: "100g", img: "https://images.unsplash.com/photo-1598585996614-2561937dfa81?auto=format&fit=crop&w=500&q=80" },
+            { id: 4, name: "Museau de Bœuf", category: "boeuf", price: 2.90, unit: "unité", img: "https://images.unsplash.com/photo-1598585996614-2561937dfa81?auto=format&fit=crop&w=500&q=80" },
+            
+            // VOLAILLE
+            { id: 10, name: "Pattes de Poulet", category: "volaille", price: 5.00, unit: "x10", img: "https://images.unsplash.com/photo-1623366302587-b38b1ddaefd9?auto=format&fit=crop&w=500&q=80" },
+            { id: 11, name: "Filets de Canard", category: "volaille", price: 8.90, unit: "200g", img: "https://images.unsplash.com/photo-1623366302587-b38b1ddaefd9?auto=format&fit=crop&w=500&q=80" },
+            { id: 12, name: "Cous de Poulet", category: "volaille", price: 3.00, unit: "x10", img: "https://images.unsplash.com/photo-1623366302587-b38b1ddaefd9?auto=format&fit=crop&w=500&q=80" },
+            
+            // PORC
+            { id: 20, name: "Oreille de Porc", category: "porc", price: 2.40, unit: "unité", img: "https://images.unsplash.com/photo-1606858607153-2cf530182470?auto=format&fit=crop&w=500&q=80" },
+            { id: 21, name: "Groin de Porc Soufflé", category: "porc", price: 1.90, unit: "unité", img: "https://images.unsplash.com/photo-1606858607153-2cf530182470?auto=format&fit=crop&w=500&q=80" },
+            
+            // POISSON
+            { id: 30, name: "Peaux de Saumon", category: "poisson", price: 2.00, unit: "x4", img: "https://images.unsplash.com/photo-1516684669134-de6d7c47743b?auto=format&fit=crop&w=500&q=80" },
+            { id: 31, name: "Sprats Séchés", category: "poisson", price: 2.50, unit: "50g", img: "https://images.unsplash.com/photo-1516684669134-de6d7c47743b?auto=format&fit=crop&w=500&q=80" },
+            
+            // MASTICATION / AUTRES
+            { id: 40, name: "Bois de Cerf (L)", category: "mastication", price: 16.90, unit: "unité", img: "https://images.unsplash.com/photo-1535930749574-1399327ce78f?auto=format&fit=crop&w=500&q=80" },
+            { id: 41, name: "Fromage Yak (M)", category: "mastication", price: 9.90, unit: "unité", img: "https://images.unsplash.com/photo-1535930749574-1399327ce78f?auto=format&fit=crop&w=500&q=80" }
+        ];
+
+        let cart = {};
+
+        // RENDER PRODUCTS
+        function renderProducts(filter = 'all') {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+
+            filtered.forEach(product => {
+                const card = `
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition duration-300 flex flex-col h-full">
+                        <div class="h-48 overflow-hidden relative group">
+                            <span class="absolute top-3 left-3 bg-brand-light text-brand-dark text-xs font-bold px-3 py-1 rounded-full uppercase z-10">${product.category}</span>
+                            <img src="${product.img}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        </div>
+                        <div class="p-6 flex flex-col flex-1">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-lg text-brand-dark leading-tight">${product.name}</h3>
+                            </div>
+                            <p class="text-sm text-gray-500 mb-4">${product.unit}</p>
+                            <div class="mt-auto flex justify-between items-center">
+                                <span class="text-2xl font-bold text-brand-accent">${product.price.toFixed(2)}€</span>
+                                <button onclick="addToCart(${product.id})" class="bg-brand-green text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-brand-dark transition shadow-lg">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
+        // FILTER LOGIC
+        function filterProducts(category) {
+            renderProducts(category);
+            // Update active button style
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-green', 'text-white', 'shadow-md');
+                btn.classList.add('hover:bg-brand-light', 'text-gray-600');
+            });
+            event.currentTarget.classList.remove('hover:bg-brand-light', 'text-gray-600');
+            event.currentTarget.classList.add('bg-brand-green', 'text-white', 'shadow-md');
+        }
+
+        // CART LOGIC
+        function addToCart(id) {
+            if(!cart[id]) cart[id] = 0;
+            cart[id]++;
+            updateCartUI();
+            
+            // Petit effet visuel
+            const btn = event.currentTarget;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            setTimeout(() => btn.innerHTML = '<i class="fa-solid fa-plus"></i>', 1000);
+            
+            // Ouvrir le panier si c'est le premier ajout
+            const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+            if(totalItems === 1) toggleCart(true);
+        }
+
+        function updateCartUI() {
+            const cartList = document.getElementById('cart-items');
+            const cartBadge = document.getElementById('cart-badge');
+            const cartTotal = document.getElementById('cart-total');
+            
+            let total = 0;
+            let count = 0;
+            let html = '';
+
+            for (const [id, qty] of Object.entries(cart)) {
+                if(qty > 0) {
+                    const product = products.find(p => p.id == id);
+                    const subtotal = product.price * qty;
+                    total += subtotal;
+                    count += qty;
+
+                    html += `
+                        <div class="flex justify-between items-center bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                            <div>
+                                <h4 class="font-bold text-sm text-brand-dark">${product.name}</h4>
+                                <div class="text-xs text-gray-500">${product.price.toFixed(2)}€ / ${product.unit}</div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button onclick="changeQty(${id}, -1)" class="w-6 h-6 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200">-</button>
+                                <span class="font-bold w-4 text-center">${qty}</span>
+                                <button onclick="changeQty(${id}, 1)" class="w-6 h-6 rounded-full bg-brand-light text-brand-dark flex items-center justify-center hover:bg-brand-green hover:text-white">+</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            if(count === 0) {
+                cartList.innerHTML = '<p class="text-center text-gray-400 mt-10">Votre panier est vide 🐶</p>';
+                cartBadge.classList.add('hidden');
+            } else {
+                cartList.innerHTML = html;
+                cartBadge.innerText = count;
+                cartBadge.classList.remove('hidden');
+            }
+            
+            cartTotal.innerText = total.toFixed(2) + ' €';
+        }
+
+        function changeQty(id, delta) {
+            cart[id] += delta;
+            if(cart[id] <= 0) delete cart[id];
+            updateCartUI();
+        }
+
+        function toggleCart(forceOpen = false) {
+            const modal = document.getElementById('cart-modal');
+            const panel = document.getElementById('cart-panel');
+            
+            if (modal.classList.contains('hidden') || forceOpen === true) {
+                modal.classList.remove('hidden');
+                setTimeout(() => panel.classList.remove('translate-x-full'), 10);
+            } else {
+                panel.classList.add('translate-x-full');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        function checkout() {
+            let message = "Bonjour Anim'O'Parc,\nJe souhaite commander :\n\n";
+            let total = 0;
+            
+            for (const [id, qty] of Object.entries(cart)) {
+                const product = products.find(p => p.id == id);
+                message += `- ${qty}x ${product.name} (${(product.price * qty).toFixed(2)}€)\n`;
+                total += product.price * qty;
+            }
+            
+            message += `\nTOTAL : ${total.toFixed(2)}€\n\nMerci !`;
+            
+            const mailto = `mailto:animoparcloiret@gmail.com?subject=Nouvelle Commande&body=${encodeURIComponent(message)}`;
+            window.location.href = mailto;
+        }
+
+        // Init
+        renderProducts();
+    </script>
+</body>
+</html>
